@@ -1,8 +1,11 @@
-
+﻿
 using AuthAppV2.Context;
 using AuthAppV2.Managers;
 using AuthAppV2.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace AuthAppV2
 {
@@ -25,6 +28,35 @@ namespace AuthAppV2
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Authentication Servis - Jwt
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+
+                    ValidateIssuer = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"], // appsettingsteki değer.
+                    ValidateAudience = true,
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    ValidateLifetime = true,
+
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]!))
+
+                };
+
+
+            });
+
+
+
+
+
+
+
+
+
+
             var cs = builder.Configuration.GetConnectionString("DefaultConnection");
 
             builder.Services.AddDbContext<AuthAppDbContext>(options => options.UseSqlServer(cs));
@@ -43,6 +75,7 @@ namespace AuthAppV2
            
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

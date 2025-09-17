@@ -6,7 +6,8 @@ namespace AuthAppV2.Services
     public interface IUserService
     {
         ServiceMessage AddUser(UserAddDto user);
-       
+
+        ServiceMessage<UserInfoDto> LoginUser(LoginUserDto user);
     
     
     }

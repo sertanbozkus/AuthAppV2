@@ -22,7 +22,7 @@ namespace AuthAppV2.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost("/register")]
         public IActionResult Register(RegisterRequest request)
         {
             var userDto = new UserAddDto
@@ -36,7 +36,35 @@ namespace AuthAppV2.Controllers
             if (result.IsSucceed)
                 return Ok(result.Message);
             else
-                return Ok(result.Message);
+                return BadRequest(result.Message);
+
+        }
+
+        [HttpPost("/Login")] // HttpGet yazarsam veriler querystring üzerinde taşınırken görülür. O nedenle bir ekleme yapmayacak  bile olsam login işlemlerinde HttpPost tercih ediyorum.
+        public IActionResult Login(LoginRequest request)
+        {
+
+            var loginUserDto = new LoginUserDto
+            {
+                Email = request.Email.Trim(),
+                Password = request.Password
+            };
+
+            var result = _userService.LoginUser(loginUserDto);
+
+            if (!result.IsSucceed)
+                return BadRequest(result.Message);
+
+            var user = result.Data;
+
+            // ASIL OLAY BAŞLIYOR !
+
+
+
+
+
+
+            return Ok();
 
         }
 
